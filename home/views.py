@@ -2,8 +2,25 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from .Forms import UserAdminCreationForm, AuthenticationForm
+from django.http.response import StreamingHttpResponse
 from .models import MyUser
+from home.camera import VideoCamera
 from django.contrib.auth.decorators import login_required
+from django.template import loader, Context
+
+camera = VideoCamera()
+
+def gen():
+	global camera
+	while True:
+		frame = camera.get_frame()
+		yield (b'--frame\r\n'
+				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+def video_feed(request):
+	return StreamingHttpResponse(gen(),
+					content_type='multipart/x-mixed-replace; boundary=frame')
+
 
 def home(request):
     return render(request, 'home.html')

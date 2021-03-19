@@ -27,4 +27,5 @@ urlpatterns = [
     path('deafmode/', views.deafmode, name='deafmode'),
     path('blindmode/', views.blindmode, name='blindmode'),
     path('dumbmode/', views.dumbmode, name='dumbmode'),
+    path('video_feed/', views.video_feed, name='video_feed'),
 ]
