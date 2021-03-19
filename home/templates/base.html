@@ -31,14 +31,47 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav mr-auto">
 
+                    <li class="nav-item {{ current }}">
+                        <a class="nav-link" href="{% url 'dumbmode' %}"><strong>dumb </strong></a>
+                    </li>
+                    <li class="nav-item {{ completed }}">
+                        <a class="nav-link" href="{% url 'deafmode' %}"><strong>deaf</strong></a>
+                    </li>
+                    <li class="nav-item {{ create }}">
+                        <a class="nav-link" href="{% url 'blindmode' %}"><strong>blind</strong></a>
+                    </li>
+
+                </ul>
+                {% endif %}
                 <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            hello
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Profile</a>
+                            <a class="dropdown-item" href="#">Change Password</a>
+                            <a class="dropdown-item" href="#" onclick="$('#signOutBtn').click()"
+                                class="nav-link">Logout</a>
+                            <form style='display: none;' method="POST" action="{% url 'logoutuser' %}">
+                                {% csrf_token %}
+                                <button id="signOutBtn" type="submit"><strong>Logout</strong></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'signup' %}"><strong>Sign Up</strong></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'loginuser' %}"><strong>Login</strong></a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

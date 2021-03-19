@@ -24,4 +24,7 @@ urlpatterns = [
     path('loginuser/', views.loginuser, name='loginuser'),
     path('logout/', views.logoutuser, name='logoutuser'),
     path('profile/', views.profile, name='profile'),
+    path('deafmode/', views.deafmode, name='deafmode'),
+    path('blindmode/', views.blindmode, name='blindmode'),
+    path('dumbmode/', views.dumbmode, name='dumbmode'),
 ]

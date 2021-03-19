@@ -8,6 +8,15 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, 'home.html')
 
+def dumbmode(request):
+    return render(request, 'dumb.html')
+
+def blindmode(request):
+    return render(request, 'blind.html')
+
+def deafmode(request):
+    return render(request, 'deaf.html')
+
 @login_required
 def profile(request):
     #details = User.objects.filter(user=request.user)
