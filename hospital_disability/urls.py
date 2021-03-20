@@ -28,4 +28,6 @@ urlpatterns = [
     path('blindmode/', views.blindmode, name='blindmode'),
     path('dumbmode/', views.dumbmode, name='dumbmode'),
     path('video_feed/', views.video_feed, name='video_feed'),
+    path('listofrecords/', views.listofrecords, name='listofrecords'),
+    path('uploadrecord/', views.uploadrecord, name='uploadrecord'),
 ]

@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
-from .Forms import UserAdminCreationForm, AuthenticationForm
+from .Forms import RecordForm
 from django.http.response import StreamingHttpResponse
-from .models import MyUser
+from .models import Record
 from home.camera import VideoCamera
 from django.contrib.auth.decorators import login_required
 from django.template import loader, Context
@@ -36,46 +37,65 @@ def deafmode(request):
 
 @login_required
 def profile(request):
-    #details = User.objects.filter(user=request.user)
     return render(request, 'profile.html')
 
 def signup(request):
+    logout(request)
     if request.method == 'GET':
-        return render(request, 'signup.html', {'form': UserAdminCreationForm()})
+        return render(request, 'signup.html', {'form': UserCreationForm()})
     else:
-        # Create a new user
         if request.POST['password1'] == request.POST['password2']:
             try:
-                user = MyUser.objects.create_user(password=request.POST['password1'], email=request.POST['email'], mob=request.POST['mob'])
-                user.save()
-                login(request, user)
-                return redirect('profile')
-
+                user = User.objects.create_user(request.POST['username'], password=request.POST['password1'], email=request.POST['email'])
+                email = request.POST['email'].lower()
+                r = User.objects.filter(email=email)
+                if r.count():
+                    return render(request, 'signup.html', {'error': 'Email already exists'})
+                else:
+                    user.save()
+                    login(request, user)
+                    return redirect('listofrecords')
 
             except IntegrityError:
-                return render(request, 'signup.html',
-                              {'error': 'This email id has already been registered. Please try to login or use different email id'})
-            except ValueError:
-                return render(request, 'signup.html',
-                              {'error': 'Please enter valid email'})
+                return render(request, 'signup.html',{'error': 'This username has already been taken. Please choose a new Username'})
         else:
-            # tell the user the password didn't match
             return render(request, 'signup.html', {'error': 'Passwords did not match'})
 
+
 def loginuser(request):
+    logout(request)
     if request.method == 'GET':
         return render(request, 'loginuser.html', {'form': AuthenticationForm()})
     else:
-        user = authenticate(request, email=request.POST['email'], password=request.POST['password'])
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
             return render(request, 'loginuser.html',
                           {'form': AuthenticationForm(), 'error': 'User password did not match'})
         else:
             login(request, user)
-            return redirect('profile')
 
 @login_required
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+
+@login_required
+def uploadrecord(request):
+    if request.method == 'GET':
+        return render(request, 'recordupload.html', {'form': RecordForm()})
+    else:
+        try:
+            form = RecordForm(request.POST)
+            newRecord = form.save(commit=False)
+            newRecord.user = request.user
+            newRecord.save()
+            return redirect('listofrecords')
+        except ValueError:
+            return render(request, 'recordupload.html',
+                          {'form': RecordForm(), 'error': 'Wrong data put in. Try Again'})
+
+@login_required
+def listofrecords(request):
+    record = Record.objects.filter(user=request.user).order_by('-created')
+    return render(request, 'recordlist.html', {'record':record})
