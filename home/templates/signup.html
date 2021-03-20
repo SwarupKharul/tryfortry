@@ -18,14 +18,16 @@
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control" id="username" aria-describedby="usernameHelp">
+                <small id="usernameHelp" class="form-text text-muted">Your username must be unique. We'll let you know
+                    if someone has taken it already.</small>
+            </div>
+            <div class="form-group">
                 <label for="email">Email Id</label>
                 <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
                 <small id="emailHelp" class="form-text text-muted">We'll let you know if the email has already
                     registered .</small>
-            </div>
-            <div class="form-group">
-                <label for="mob"><b>Mobile Number</b></label>
-                <input type="tel" placeholder="Enter Mobile Number" name="mob" required>
             </div>
             <div class="form-group">
                 <label for="password1">Password</label>
