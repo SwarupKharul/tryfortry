@@ -47,15 +47,15 @@ def signup(request):
     else:
         if request.POST['password1'] == request.POST['password2']:
             try:
-                user = User.objects.create_user(request.POST['username'], password=request.POST['password1'], email=request.POST['email'])
                 email = request.POST['email'].lower()
                 r = User.objects.filter(email=email)
                 if r.count():
                     return render(request, 'signup.html', {'error': 'Email already exists'})
                 else:
+                    user = User.objects.create_user(request.POST['username'], password=request.POST['password1'], email=request.POST['email'])
                     user.save()
                     login(request, user)
-                    return redirect('listofrecords')
+                    return redirect('home')
 
             except IntegrityError:
                 return render(request, 'signup.html',{'error': 'This username has already been taken. Please choose a new Username'})
@@ -74,6 +74,7 @@ def loginuser(request):
                           {'form': AuthenticationForm(), 'error': 'User password did not match'})
         else:
             login(request, user)
+            return redirect('home')
 
 @login_required
 def logoutuser(request):
